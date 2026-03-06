@@ -5,17 +5,17 @@ import express from 'express'
 
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js'
+import { mongoDb } from "./config/mongoDb.js";
 
 dotenv.config();
 
 const app = express();
-
+// console.log(process.env.MONGO_URI)
+mongoDb()
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("mongoDB connected"))
-.catch((error) => console.log(error));
+
 
 app.use('/api/auth',authRoutes);
 app.use('/api/admin', adminRoutes);
