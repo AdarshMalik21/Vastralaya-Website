@@ -23,12 +23,22 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
+    const token=generateToken(user._id,user.role)
+
+    res.cookie("token",token,{
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+
+    })
+
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id, user.role),
+      token: token,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -48,13 +58,22 @@ export const loginUser = async (req, res) => {
 
     if (!isMatch)
       return res.status(400).json({ message: "Invalid Credentials" });
+     const token=generateToken(user._id,user.role)
+
+    res.cookie("token",token,{
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+
+    })
 
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id, user.role),
+      token: token,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

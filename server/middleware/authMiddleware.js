@@ -1,18 +1,16 @@
-import jwt from 'jsonwebtoken'
-import {User} from '../Model/user.model.js'
+import jwt from "jsonwebtoken";
 
-export const protect = async(req, res, next) =>{
-    let token;
 
-    if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
-        token = req.headers.authorization.split(' ')[1];
+export const protect = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
 
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    if (!token) res.json({ message: "user not logged In" });
+    const decode = jwt.verify(token, process.env.SECRET_KEY);
+    req.body = decode;
 
-        req.user = await User.findById(decoded.id).select("-password");
-        next();
-    }
-    else {
-    res.status(401).json({ message: "Not authorized" });
+    next();
+  } catch (error) {
+    res.json({ message: "middleware error" });
   }
-}
+};

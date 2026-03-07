@@ -7,6 +7,8 @@ import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import { mongoDb } from "./config/mongoDb.js";
+import cookieParser from "cookie-parser";
+
 
 dotenv.config();
 
@@ -15,6 +17,9 @@ const app = express();
 mongoDb()
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
+// Without cookie-parser, cookies are just a string in headers.
+// With cookie-parser, they become an object.
 app.use("/uploads", express.static("uploads"));
 
 
