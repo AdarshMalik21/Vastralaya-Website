@@ -1,14 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';   
 import './App.css'
+import { fetchProducts } from './features/products/productSlice';
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  const {products} = useSelector((state) => state.products || [])
+  const dispatch = useDispatch();
+  
+  useEffect(()=>{
+    dispatch(fetchProducts());
+  },[dispatch])
 
+  console.log(products)
   return (
     <>
       <div className='text-2xl'>Hello world</div>
+      {products?.map((item) => (
+        <div key= {item.id}>
+          <h1>{item.name}</h1>
+        </div>
+      ))}
     </>
   )
 }
