@@ -23,15 +23,14 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token=generateToken(user._id,user.role)
+    const token = generateToken(user._id, user.role);
 
-    res.cookie("token",token,{
+    res.cookie("token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
-
-    })
+    });
 
     res.status(201).json({
       _id: user._id,
@@ -58,15 +57,14 @@ export const loginUser = async (req, res) => {
 
     if (!isMatch)
       return res.status(400).json({ message: "Invalid Credentials" });
-     const token=generateToken(user._id,user.role)
+    const token = generateToken(user._id, user.role);
 
-    res.cookie("token",token,{
+    res.cookie("token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
-
-    })
+    });
 
     res.json({
       _id: user._id,
@@ -77,5 +75,41 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    // Clear the cookie named 'token'
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    return res.status(200).json({ message: "logout successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+export const authMe = async (req, res) => {
+
+  try {
+    console.log(req.body.id)
+    const userData = await User.findById(req.body.id).select("-password");
+    console.log(userData)
+
+    if (!userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message:`Mujhe pehchano mai hu kaun`,
+      userData,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error", error });
   }
 };

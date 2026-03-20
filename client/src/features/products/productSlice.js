@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // 🔹 Base URL
-const API_URL = "http://localhost:8000/api/products/getAll";
+const API_URL = `http://localhost:5000/api/products/getAll`;
 
 
 
@@ -25,14 +25,10 @@ export const addProduct = createAsyncThunk(
   "products/addProduct",
   async (productData, thunkAPI) => {
     try {
-      const state = thunkAPI.getState();
-      const token = state.auth.token;
-
-      const response = await axios.post(API_URL, productData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        // Server uses cookie-based auth (token in httpOnly cookie). Send credentials.
+        const response = await axios.post(API_URL, productData, {
+          withCredentials: true,
+        });
 
       return response.data;
     } catch (error) {

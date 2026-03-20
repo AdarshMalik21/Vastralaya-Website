@@ -6,6 +6,7 @@ import { fetchProducts } from './features/products/productSlice';
 function App() {
   
   const {products} = useSelector((state) => state.products || [])
+  
   const dispatch = useDispatch();
   
   useEffect(()=>{
